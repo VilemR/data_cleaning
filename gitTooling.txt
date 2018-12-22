@@ -1,3 +1,0 @@
-
-/home/vilem_reznicek/Development/RStudio_projects/RStudio_projects/coursera
-git clone https://github.com/VilemR/data_cleaning.git
