@@ -1,5 +1,7 @@
 install.packages("knitr")
 
+#test je to tam?
+
 install.packages("markdown")
 
 require(knitr)
