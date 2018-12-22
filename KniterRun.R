@@ -1,6 +1,6 @@
 install.packages("knitr")
 
-#test je to tam?
+#test je to tam? podruhe?
 
 install.packages("markdown")
 
