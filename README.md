@@ -4,7 +4,7 @@ The purpose of the project is to demonstrate ability to collect, work with, and 
 
  1. a tidy data set as described below,
  2. a link to a Github repository with your script for performing the analysis, and
- 3. a code book that describes the variables, the data, and any transformations or work that you performed to clean up the data called **CodeBook.md**.
+ 3. a code book that describes the variables, the data, and any transformations or work that you performed to clean up the data called **[CodeBook.md](https://github.com/VilemR/data_cleaning/tree/master/CodeBook.md)**.
 
 This repo explains how all of the scripts work and how they are connected.
 
@@ -16,7 +16,12 @@ Download link to obtain the dataset:
 
 https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
 
-R script called **run_analysis.R** does the following.
+The finally produced R script called 
+```sh
+run_analysis.R 
+```
+
+does the following:
 
  - Merges the training and the test sets to create one data set.
  - Extracts only the measurements on the mean and standard deviation for each measurement.

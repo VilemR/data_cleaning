@@ -1,11 +1,11 @@
-R.version.string          # Recommended version 3.5.0 and above
+R.version.string          # Recommended version 3.0.0 and above
 
 #install.packages('data.table')
 #install.packages('dplyr')
 
-#If you fail loading libraries below, uncomment two lines above, install both of required and comment back (run the install once only)
-library(data.table) #better for large datasets
-library(dplyr) #good for aggregations
+#If you fail loading libraries below uncomment please two lines above in order to install both of required libraries. Then add comment sign (#) back
+library(data.table)   #better for large datasets
+library(dplyr)        #good for aggregations
 
 #Link to download input dataset (if not loaded from this repository)
 fileurl = 'https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip'
@@ -45,48 +45,64 @@ temp_test_subject  = read.table("UCI HAR Dataset/test/subject_test.txt", header 
 
 #RBIND - "UNION ALL" all three subsets  
 temp_features_both = rbind(temp_train_features, temp_test_features)                   # Feature
+rm(temp_train_features);
+rm(temp_test_features)
 temp_activity_both = rbind(temp_train_activity, temp_test_activity)                   # Activity
-temp_subject_both = rbind(temp_train_subject, temp_test_subject) # Subject 
+rm(temp_train_activity)
+rm(temp_test_activity)
+temp_subject_both = rbind(temp_train_subject, temp_test_subject)                      # Subject 
+rm(temp_train_subject)
+rm(temp_test_subject)
 
 #Finally, assembling of the full source dataset : SUBJECT, ACTIVITY , X[] (features) into one dataset
-fullSourceDataSett = cbind(temp_subject_both, temp_activity_both, temp_features_both  )
-colnames(fullSourceDataSett) <- c(c('SUBJECT','ACTIVITY'),featureColumnNames)
+fullSourceDataSet = cbind(temp_subject_both, temp_activity_both, temp_features_both  )
+rm(temp_subject_both)
+rm(temp_activity_both)
+rm(temp_features_both)
 
-#GOAL1 : fullSourceDataSett contains merged training and testing dataset  
+colnames(fullSourceDataSet) <- c(c('SUBJECT','ACTIVITY'),featureColumnNames)
 
-#Select STDDEV & MEAN columns and apply naming conventions
-featureColumnNamesScope <-grep('.*mean.*|.*std.*',featureColumnNames , ignore.case=TRUE)
-datasetScope <- fullSourceDataSett[,c(1,2,featureColumnNamesScope + 2)]
+#GOAL1 : achieved - fullSourceDataSett contains merged training and testing dataset  
 
-#GOAL2 : datasetScope contains only the measurements on the mean and standard deviation for each measurement 
+#Extracts only the measurements on the mean and standard deviation for each measurement (those -mean() or -std() only)
+featureColumnNamesScope <-grep('-mean\\(\\)|-std\\(\\)',featureColumnNames , ignore.case=TRUE)
+datasetScope <- fullSourceDataSet[,c(1,2,featureColumnNamesScope + 2)]
+rm(fullSourceDataSet)
+
+#GOAL2 : achieved - datasetScope contains only the measurements on the mean and standard deviation for each measurement 
+
+names(datasetScope)
 
 #Rename column labels in order to better describe variable names
 names(datasetScope) <- gsub("[(][)]", "", names(datasetScope))
 names(datasetScope) <- gsub("^t", "TIME_", names(datasetScope))
 names(datasetScope) <- gsub("^f", "FREQ_", names(datasetScope))
 names(datasetScope) <- gsub("Acc", "ACCEL_", names(datasetScope))
+names(datasetScope) <- gsub("Gravity", "GRAV_", names(datasetScope))
 names(datasetScope) <- gsub("Gyro", "GYRO_", names(datasetScope))
 names(datasetScope) <- gsub("Mag", "MAGNIT_", names(datasetScope))
 names(datasetScope) <- gsub("mean", "MEAN_", names(datasetScope))
 names(datasetScope) <- gsub("std", "STDDEV_", names(datasetScope))
+names(datasetScope) <- gsub("Jerk", "JERK_", names(datasetScope))
 names(datasetScope) <- gsub("BodyBody", "Body", names(datasetScope))
 names(datasetScope) <- gsub("Body", "BODY_", names(datasetScope))
 names(datasetScope) <- gsub("-", "_", names(datasetScope))
 names(datasetScope) <- gsub("__", "_", names(datasetScope))
+names(datasetScope) <- gsub("\\_$","", names(datasetScope))
+
 names(datasetScope) <- toupper(names(datasetScope))
 
 # Change ActivityID (numeric code) to activity name (LAYING, WALKING, SITTING,...etc)
 activityDictionaryLabels <- as.character(activityDictionaryTable[,2])
 datasetScope$ACTIVITY <-activityDictionaryLabels[datasetScope$ACTIVITY]
 
-#GOAL3 : datasetScope has appropriately labeled the data set with descriptive variable names and activity
+#GOAL3 : achieved - datasetScope has appropriately labeled the data set with descriptive variable names and activity
 
 # Aggregate the data set. Group by SUBJECT, ACTIVITY and calculate Mean() of all features
-datasetTidy <- aggregate(datasetScope[,3:88], by = list(ACTIVITY = datasetScope$ACTIVITY, SUBJECT = datasetScope$SUBJECT),FUN = mean)
+datasetTidy <- aggregate(datasetScope[,3:ncol(datasetScope)], by = list(ACTIVITY = datasetScope$ACTIVITY, SUBJECT = datasetScope$SUBJECT), FUN = mean)
 
-#GOAL4 : A datasetTidy created with the average of each variable for each activity and each subject
+#GOAL4 : achieved - datasetTidy created with the average of each variable for each activity and each subject
 
 # Save aggregated data into file
-write.table(x = datasetTidy, file = "data_tidy.txt", row.names = FALSE)
-
-
+write.table(x = datasetTidy, file = "tidyData.txt", row.names = FALSE)
+str(datasetTidy)
