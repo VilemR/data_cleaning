@@ -20,8 +20,6 @@ according to *following requirements*:
 
 The data set can be loaded using following steps:
 
-
-
 ```r
 library(data.table)   #better for large datasets
 tidyData <- read.table("tidyData.txt", header = TRUE)
@@ -55,7 +53,6 @@ Full list of all activities in the data set:
 
 List of Measures (Variables):
 ------------
-
 
 ```
 ##  [1] "TIME_BODY_ACCEL_MEAN_X"            
